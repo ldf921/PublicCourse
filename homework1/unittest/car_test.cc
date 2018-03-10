@@ -27,9 +27,10 @@ TEST(Car, TestState) {
   // Please check the state of car.
   car.Drive();
   // Your code here.
-
+  ASSERT_EQ(Car::State::kRunning, car.state());
   car.Stop();
   // Your code here.
+  ASSERT_EQ(Car::State::kParked, car.state());
 
 }
 
