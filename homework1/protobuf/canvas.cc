@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <glog/logging.h>
+#include <math.h>
 
 namespace homework1 {
 
@@ -40,6 +41,19 @@ const std::string Canvas::SerializeToString() const {
   std::string serialzation;
   CHECK(polygon_.SerializeToString(&serialzation)) << "Canvas serialization failed.";
   return serialzation;
+}
+
+double distance(const homework1::geometry::Point3D &a, const homework1::geometry::Point3D &b)
+{
+  int x = a.x() - b.x(), y = a.y() - b.y(), z = a.z() - b.z();
+  return sqrt(x * x + y * y + z * z);
+}
+
+double get_length(const homework1::geometry::Polyline &polyline)
+{
+  double length = 0;
+  for(int i = 0; i < polyline.point_size() - 1; i++ ) length += distance(polyline.point(i), polyline.point(i+1) );
+  return length;
 }
 
 }  // namespace homework1

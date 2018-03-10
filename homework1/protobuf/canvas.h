@@ -26,5 +26,10 @@ class Canvas {
   homework1::geometry::Polygon polygon_;
 };
 
+double distance(const homework1::geometry::Point3D &a, const homework1::geometry::Point3D &b);
+
+double get_length(const homework1::geometry::Polyline &polyline);
+
+
 }  // namespace homework1
 
