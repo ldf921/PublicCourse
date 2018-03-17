@@ -4,3 +4,4 @@ bazel-*
 cmake-build-debug
 CMakeLists.txt
 *.zip
+homework2/sample_data/
