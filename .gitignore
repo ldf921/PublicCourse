@@ -6,3 +6,4 @@ CMakeLists.txt
 *.zip
 homework2/sample_data/
 *.html
+homework2/python/.ipynb_checkpoints/
