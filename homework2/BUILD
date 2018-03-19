@@ -17,3 +17,13 @@ cc_binary(
         ":pointcloud",
     ],
 )
+
+cc_binary(
+    name = "rgb2gray",
+    srcs = ["rgb2gray.cc"],
+    deps = [
+        "@opencv//:core",
+        "@opencv//:highgui",
+        "@opencv//:imgproc",
+    ],
+)
