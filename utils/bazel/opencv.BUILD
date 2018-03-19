@@ -4,10 +4,14 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "core",
-    srcs = ["lib/x86_64-linux-gnu/libopencv_core.so"],
+    srcs = glob(["lib/libopencv_*.so.3.4"]),
     hdrs = glob([
         "include/opencv2/core/*.h",
         "include/opencv2/core/*.hpp",
+        "include/opencv2/core/hal/*.h",
+        "include/opencv2/*.hpp",
+        "include/opencv2/imgcodecs/*.h",
+        "include/opencv2/videoio/*.h"
     ]),
     includes = ["include"],
     linkstatic = 1,
@@ -48,7 +52,7 @@ cc_library(
 
 cc_library(
     name = "highgui",
-    srcs = ["lib/x86_64-linux-gnu/libopencv_highgui.so"],
+    srcs = ["lib/libopencv_highgui.so"],
     hdrs = glob([
         "include/opencv2/highgui/*.h",
         "include/opencv2/highgui/*.hpp",
@@ -58,7 +62,7 @@ cc_library(
 
 cc_library(
     name = "imgproc",
-    srcs = ["lib/x86_64-linux-gnu/libopencv_imgproc.so"],
+    srcs = ["lib/libopencv_imgproc.so"],
     hdrs = glob([
         "include/opencv2/imgproc/*.h",
         "include/opencv2/imgproc/*.hpp",
