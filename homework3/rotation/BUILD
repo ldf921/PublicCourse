@@ -17,3 +17,11 @@ cc_test(
         "//utils/testing:test_main",
     ],
 )
+
+cc_test(
+    name = "main",
+    srcs = ["main.cc"],
+    deps = [
+        ":rotation"
+    ],
+)
