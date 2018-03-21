@@ -15,6 +15,20 @@ cc_binary(
     srcs = ["main.cc"],
     deps = [
         ":pointcloud",
+        "@opencv//:core",
+        "@opencv//:highgui",
+        "@opencv//:imgproc",
+    ],
+)
+
+cc_binary(
+    name = "edge_detect",
+    srcs = ["edge_detect.cc"],
+    deps = [
+        ":pointcloud",
+        "@opencv//:core",
+        "@opencv//:highgui",
+        "@opencv//:imgproc",
     ],
 )
 
