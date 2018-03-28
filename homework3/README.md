@@ -11,11 +11,11 @@ Now, you guys have been familiar with pointcloud data and have learnt about cali
 ### 1. Get familiar with transformation representation.
 When we want to rotate something in 3D space, we have many representations for the rotation. For example, roll-pitch-yaw is intuitive and used in airplanes; angle-axis is intuitive and clean, and rotation matrix is easy to use in computation. Among these three, rotation matrix is typically not easy for people to imagine. However, if you convert it to another format, you would be clear what it means.
 
-Your task is to implement the conversion from rotation matrix to roll-pitch-yaw and angle-axis representations. For roll-pitch-yaw representation, the rotation intrinsic is roll->pitch->yaw. That is, the rotation sequence is **R(yaw) * R(pitch) * R(roll)**.
+Your task is to implement the conversion from rotation matrix to roll-pitch-yaw and angle-axis representations. For roll-pitch-yaw representation, the rotation intrinsic is roll->pitch->yaw. That is, the rotation sequence is **R(yaw) * R(pitch) * R(roll)**. There may be multiple solutions for the input. You can add a reasonable constraint to the result to get the test passed. For example, you can require `roll >= 0`.
 
 **What to submit:** Your C++ implementation of rotation/rotation_test.cc to pass the unit tests non-trivially. Note, you should implement the conversion by yourself instead of using any existing APIs.
 
-** Note that the test has been updated. Please update to the latest version. Thanks to @hqztrue for pointing out the mistake. **
+** Note that the test has been updated. Please update to the latest version. Thanks to @hqztrue and @Chenyao2333 for pointing out the mistakes. **
 
 ### 2. Chessboard distortion
 
