@@ -29,6 +29,7 @@ cc_binary(
         "@opencv//:core",
         "@opencv//:highgui",
         "@opencv//:imgproc",
+        "@eigen//:eigen",
     ],
 )
 
