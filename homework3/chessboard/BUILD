@@ -9,3 +9,14 @@ cc_binary(
         "@opencv//:imgproc",
     ],
 )
+
+cc_binary(
+    name = "distort",
+    srcs = ["distort.cc"],
+    deps = [
+        "@opencv//:core",
+        "@opencv//:highgui",
+        "@opencv//:imgproc",
+        "@eigen//:eigen"
+    ],
+)
