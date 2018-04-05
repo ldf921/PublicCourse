@@ -12,6 +12,17 @@ cc_binary(
     ],
 )
 
+cc_binary(
+    name = "route_main",
+    srcs = ["route_main.cc"],
+    deps = [
+        "//common/utils/file",
+        "//homework5/map:map_lib",
+        "@gflags//:gflags",
+        "@glog",
+        "@eigen"
+    ],
+)
 
 cc_binary(
     name = "find_pred_succ",
@@ -20,7 +31,6 @@ cc_binary(
         "//common/utils/file",
         "//homework5/map:map_lib",
         "@gflags//:gflags",
-        "@glog",
-        "@eigen"
+        "@glog"
     ],
 )
