@@ -11,3 +11,16 @@ cc_binary(
         "@glog",
     ],
 )
+
+
+cc_binary(
+    name = "find_pred_succ",
+    srcs = ["find_pred_succ.cc"],
+    deps = [
+        "//common/utils/file",
+        "//homework5/map:map_lib",
+        "@gflags//:gflags",
+        "@glog",
+        "@eigen"
+    ],
+)
