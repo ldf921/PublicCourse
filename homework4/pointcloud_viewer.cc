@@ -1,11 +1,15 @@
 // Copyright @2018 Pony AI Inc. All rights reserved.
 
 #include "homework4/pointcloud_viewer.h"
+#include "homework4/perception_lib.h"
+
+#include <sstream>
 
 DEFINE_string(lidar_device, "VelodyneDevice32c", "");
+DEFINE_string(output_dir, "", "");
 
-PointCloudViewer::PointCloudViewer(Options options, QWidget* parent, const std::string& data_dir)
-    : PainterWidgetBase(options, parent), data_dir_(data_dir) {
+PointCloudViewer::PointCloudViewer(Options options, QWidget* parent, const std::string& data_dir, bool obstacle)
+    : PainterWidgetBase(options, parent), data_dir_(data_dir), obstacle_(obstacle) {
   const std::string pointcloud_dir = file::path::Join(data_dir_, "select", FLAGS_lidar_device);
   CHECK(file::path::Exists(pointcloud_dir)) << pointcloud_dir << " doesn't exist!";
   pointcloud_files_ = file::path::FindFilesWithPrefixSuffix(pointcloud_dir, "", "txt");
@@ -37,6 +41,29 @@ void PointCloudViewer::InitializeGlPainter() {
 void PointCloudViewer::keyPressEvent(QKeyEvent* event) {
   const int key = event->key();
   switch (key) {
+    case Qt::Key_G:
+      for(int fi = 0; fi < pointcloud_files_.size(); fi++) {
+        // Load pointcloud data.
+        const std::string pointcloud_file = pointcloud_files_[fi];
+        const PointCloud pointcloud_ = ReadPointCloudFromTextFile(pointcloud_file);
+        CHECK(!pointcloud_.points.empty());
+        LOG(INFO) << "Load pointcloud: " << pointcloud_file;
+
+        // Load object label if there is a corresponding one.
+        if (data_label_map_.count(pointcloud_file)) {
+          interface::object_labeling::ObjectLabels object_labels;
+          CHECK(file::ReadFileToProto(data_label_map_[pointcloud_file], &object_labels));
+
+          auto obstacles = perception::build(pointcloud_, object_labels);
+
+          std::ostringstream ss;
+          ss << FLAGS_output_dir << "/" << fi << ".label";
+          std::cout << ss.str() << std::endl;
+          CHECK(file::WriteProtoToFile(obstacles, ss.str()));
+        }
+      }
+      break;
+      
     case Qt::Key_N:
       file_index_ = (++file_index_) % pointcloud_files_.size();
       // Load pointcloud data.
@@ -44,11 +71,15 @@ void PointCloudViewer::keyPressEvent(QKeyEvent* event) {
       const PointCloud pointcloud_ = ReadPointCloudFromTextFile(pointcloud_file);
       CHECK(!pointcloud_.points.empty());
       LOG(INFO) << "Load pointcloud: " << pointcloud_file;
-      points_.clear();
-      points_.reserve(pointcloud_.points.size());
-      for (const auto& point : pointcloud_.points) {
-        Eigen::Vector3d point_in_world = pointcloud_.rotation * point + pointcloud_.translation;
-        points_.emplace_back(point_in_world.x(), point_in_world.y(), point_in_world.z());
+
+      if (!obstacle_) 
+      {
+        points_.clear();
+        points_.reserve(pointcloud_.points.size());
+        for (const auto& point : pointcloud_.points) {
+          Eigen::Vector3d point_in_world = pointcloud_.rotation * point + pointcloud_.translation;
+          points_.emplace_back(point_in_world.x(), point_in_world.y(), point_in_world.z());
+        }
       }
 
       // Load object label if there is a corresponding one.
@@ -66,6 +97,16 @@ void PointCloudViewer::keyPressEvent(QKeyEvent* event) {
             label.polygon.emplace_back(point.x(), point.y());
           }
           label.ceiling = label.floor + object.height();
+        }
+
+        auto obstacles = perception::build(pointcloud_, object_labels);
+        if (obstacle_) {
+          points_.clear();
+          for(const auto &obstacle : obstacles.obstacle()) {
+            for(const auto &point : obstacle.object_points()) {
+              points_.emplace_back(point.x(), point.y(), point.z());
+            }
+          }
         }
       }
 

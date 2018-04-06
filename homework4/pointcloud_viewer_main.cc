@@ -9,6 +9,7 @@
 #include "homework4/pointcloud_viewer.h"
 
 DEFINE_string(pony_data_dir, "", "The path of pony data.");
+DEFINE_bool(obstacle, false, "Whether to display only obstacle");
 
 int main(int argc, char* argv[]) {
   google::ParseCommandLineFlags(&argc, &argv, true);
@@ -16,7 +17,7 @@ int main(int argc, char* argv[]) {
 
   QApplication app(argc, argv);
   PointCloudViewer::Options options;
-  PointCloudViewer viewer(options, nullptr, FLAGS_pony_data_dir);
+  PointCloudViewer viewer(options, nullptr, FLAGS_pony_data_dir, FLAGS_obstacle);
   viewer.resize(1280, 960);
   viewer.show();
   app.exec();

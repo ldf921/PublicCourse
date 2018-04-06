@@ -47,8 +47,16 @@ ImageUV Project3dPointToImage(const Eigen::Vector3d& point,
   const double cx = camera_intrinsic(7);
   const double cy = camera_intrinsic(8);
 
-  double u = 0.0;
-  double v = 0.0;
+  double xp = point.x() / point.z();
+  double yp = point.y() / point.z();
+  double r2 = xp * xp + yp * yp;
+
+  double s = (1 + k1 * r2 + k2 * r2 * r2 + k3 * r2 * r2 * r2);
+  double x = xp * s  + 2 * p1 * xp * yp + p2 * (r2 + 2 * xp * xp);
+  double y = yp * s + p1 * (r2 + 2 * yp * yp) + 2 * p2 * xp * yp;
+
+  double u = fx * x + cx;
+  double v = fy * y + cy;
   /*
    * Implement the code to project 3D point in camera coordinate system to image plane.
    * https://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html
@@ -68,5 +76,14 @@ std::vector<PixelInfo> ProjectPointCloudToImage(
    * before projecting them onto image plane. Pointcloud's horizontal FOV is 360 degree and our
    * camera's horizontal FOV is about 80 here.
    */
+  for(const auto &point : pointcloud.points) {
+    auto &position_in_camera_coordinate = extrinsic * point;
+    if (position_in_camera_coordinate.z() > 0) {
+      auto pixel = Project3dPointToImage(position_in_camera_coordinate, intrinsic);
+      if (0 <= pixel.u && pixel.u < image_width && 0 <= pixel.v && pixel.v < image_height) {
+        pixel_info.emplace_back(pixel, position_in_camera_coordinate);
+      }
+    }
+  }
   return pixel_info;
 }

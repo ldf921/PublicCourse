@@ -23,7 +23,7 @@ class PointCloudViewer : public utils::display::PainterWidgetBase {
 
   using Options = utils::display::PainterWidgetBase::Options;
 
-  PointCloudViewer(Options options, QWidget* parent, const std::string& data_dir);
+  PointCloudViewer(Options options, QWidget* parent, const std::string& data_dir, bool obstacle);
 
   ~PointCloudViewer() override = default;
 
@@ -61,6 +61,8 @@ class PointCloudViewer : public utils::display::PainterWidgetBase {
   std::unique_ptr<utils::display::OpenglPainter> gl_painter_;
   utils::display::OpenglPainter::SurfaceStyle default_prism_style_;
   utils::display::OpenglPainter::PointStyle default_point_style_;
+
+  bool obstacle_;
 
   DISALLOW_COPY_MOVE_AND_ASSIGN(PointCloudViewer);
 };
