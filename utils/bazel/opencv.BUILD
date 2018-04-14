@@ -11,7 +11,19 @@ cc_library(
         "include/opencv2/core/hal/*.h",
         "include/opencv2/*.hpp",
         "include/opencv2/imgcodecs/*.h",
-        "include/opencv2/videoio/*.h"
+        "include/opencv2/videoio/*.h",
+        "include/opencv2/flann/*.h",
+        "include/opencv2/flann/*.hpp",
+        "include/opencv2/dnn/*.hpp",  
+        "include/opencv2/videostab/*.hpp",  
+        "include/opencv2/video/*.hpp",
+        "include/opencv2/video/*.h",
+        "include/opencv2/calib3d/*.h",
+        "include/opencv2/superres/*.hpp",
+        "include/opencv2/stitching/*.hpp",  
+        "include/opencv2/stitching/detail/*.hpp",
+        "include/opencv2/shape/*.hpp",  
+        "include/opencv2/photo/*.h",
     ]),
     includes = ["include"],
     linkstatic = 1,
@@ -73,7 +85,7 @@ cc_library(
 
 cc_library(
     name = "ml",
-    srcs = ["lib/x86_64-linux-gnu/libopencv_ml.so"],
+    srcs = ["lib/libopencv_ml.so"],
     hdrs = glob([
         "include/opencv2/ml/*.h",
         "include/opencv2/ml/*.hpp",
@@ -84,7 +96,7 @@ cc_library(
 
 cc_library(
     name = "objdetect",
-    srcs = ["lib/x86_64-linux-gnu/libopencv_objdetect.so"],
+    srcs = ["lib/libopencv_objdetect.so"],
     hdrs = glob([
         "include/opencv2/objdetect/*.h",
         "include/opencv2/objdetect/*.hpp",
