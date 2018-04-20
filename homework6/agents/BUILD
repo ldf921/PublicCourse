@@ -9,4 +9,5 @@ cc_library(
         "//homework6/agents/tlau:agent",
         "//homework6/simulation:vehicle_agent_factory",
     ],
+    alwayslink = 1,
 )
