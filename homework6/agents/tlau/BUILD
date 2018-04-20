@@ -2,7 +2,7 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "agent",
-    hdrs = ["agent.h", "straight.h"],
+    hdrs = ["agent.h", "straight.h", "curve.h"],
     deps = [
         "//homework6/agents/tlau:control",
         "//homework6/simulation:vehicle_agent",

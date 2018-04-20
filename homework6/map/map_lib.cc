@@ -1,9 +1,9 @@
-#include "homework5/map/map_lib.h"
+#include "homework6/map/map_lib.h"
 
 #include <Eigen/Core>
 #include <queue>
 
-namespace homework5 {
+namespace homework6 {
 namespace map {
 
 // Convert a Protobuf Point3D to Eigen
@@ -30,7 +30,7 @@ inline bool is_connected(const interface::map::Lane &from, const interface::map:
   return d < 1e-4;
 }
 
-void MapLib::process() {
+void RouteLib::process() {
   auto lanes = map_data_.mutable_lane();
 
   //enumerate every pair of lanes to see if one lane is the successor of another lane.
@@ -65,7 +65,7 @@ struct Path {
   }
 };
 
-void MapLib::route(interface::route::Route &route) {
+void RouteLib::route(interface::route::Route &route) {
   auto sp = locate(route.start_point());
   auto ep = locate(route.end_point());
   route.clear_route_point();
@@ -130,7 +130,7 @@ void MapLib::route(interface::route::Route &route) {
   }
 }
 
-std::pair<interface::map::Id, int> MapLib::locate(const interface::geometry::Point2D &point)
+std::pair<interface::map::Id, int> RouteLib::locate(const interface::geometry::Point2D &point)
 {
   auto query = convert2d(point);
   double min_distance = std::numeric_limits<double>::max();

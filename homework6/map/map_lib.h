@@ -24,6 +24,16 @@ struct less<interface::map::Id>
 namespace homework6 {
 namespace map {
 
+class MapLib {
+ public:
+  MapLib() { CHECK(file::ReadFileToProto("homework6/map/grid2/map_proto.txt", &map_data_));  }
+
+  const interface::map::Map& map_proto() const { return map_data_; }
+
+ private:
+  interface::map::Map map_data_;
+};
+
 
 class Lane {
 public:
@@ -37,11 +47,11 @@ private:
  const interface::map::Lane *lane_;
 };
 
-class MapLib {
- public:
-  MapLib() { CHECK(file::ReadFileToProto("homework6/map/grid2/map_proto.txt", &map_data_)); process(); }
 
-  const interface::map::Map& map_proto() const { return map_data_; }
+class RouteLib {
+ public:
+  RouteLib() {}
+  void readMap(const MapLib &map_lib) { map_data_.CopyFrom(map_lib.map_proto());  process(); }
 
   // Given a Route protobuf with a start_point and end_point,
   // find a route connect them
@@ -59,6 +69,7 @@ class MapLib {
   interface::map::Map map_data_;
   std::map<interface::map::Id, Lane *> lanes_;
 };
+
 
 }  // namespace map
 }  // namespace homework5
