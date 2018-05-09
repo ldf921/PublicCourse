@@ -8,11 +8,14 @@ cc_library(
         "//homework5/map/grid2:grid2_map",
     ],
     deps = [
-        "//common/utils/file:file",
         "//common/proto:cc_map_proto",
+<<<<<<< HEAD
         "//common/proto:cc_route_proto",
+=======
+        "//common/utils/file",
+        "@gflags",
+>>>>>>> master
         "@glog",
         "@eigen"
     ],
 )
-

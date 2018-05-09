@@ -5,9 +5,13 @@
 #include "common/proto/map.pb.h"
 #include "common/proto/route.pb.h"
 #include "common/utils/file/file.h"
+#include "common/utils/file/path.h"
 
 #include "glog/logging.h"
+#include "gflags/gflags.h"
 #include <map>
+
+DECLARE_string(map_dir);
 
 namespace std {
 
@@ -19,7 +23,6 @@ struct less<interface::map::Id>
  }
 };
 
-} //namespace std
 
 namespace homework5 {
 namespace map {
@@ -38,7 +41,14 @@ private:
 
 class MapLib {
  public:
-  MapLib() { CHECK(file::ReadFileToProto("homework5/map/grid2/map_proto.txt", &map_data_)); process(); }
+  MapLib() {
+    if (FLAGS_map_dir.empty()) {
+      CHECK(file::ReadFileToProto("homework5/map/grid2/map_proto.txt", &map_data_));
+    }  else {
+      CHECK(file::ReadTextFileToProto(file::path::Join(FLAGS_map_dir, "map_proto.txt"), &map_data_));
+    }
+    process(); 
+  }
 
   const interface::map::Map& map_proto() const { return map_data_; }
 
