@@ -26,6 +26,7 @@
 
 DEFINE_double(tlau_look_ahead, 5.0, "Distance to look ahead in direct pursuit steering planning");
 DEFINE_double(tlau_steer_kp, 10.0, "Steer Kp");
+DEFINE_string(tlau_log, "/tmp/tlau_homework_log.txt", "Log file path");
 
 namespace tlau {
 
@@ -93,8 +94,8 @@ class CurveAgent : public simulation::VehicleAgent {
     route_.mutable_end_point()->set_x(agent_status.route_status().destination().x());
     route_.mutable_end_point()->set_y(agent_status.route_status().destination().y());
     route_lib_.route(route_);
-    
-    logger_ = std::ofstream("/home/miu/PublicCourse/homework6/table/trail.log");
+
+    logger_ = std::ofstream(FLAGS_tlau_log.c_str());
     logger_ << "time,throttle,brake,velocity" << std::endl;
     LOG(INFO) << "Initialized" << std::endl;
   }
@@ -163,9 +164,16 @@ class CurveAgent : public simulation::VehicleAgent {
     //   command.set_steering_rate(std::abs(2 * velocity / FLAGS_tlau_look_ahead));      
     // }
 
-    logger_ << timestamp << ',' << command.throttle_ratio() << ',' << command.brake_ratio()
-    << ',' << CalcVelocity(agent_status.vehicle_status().velocity()) <<  std::endl;
-
+    static bool closed = false;
+    if (!closed) {
+      logger_ << timestamp << ',' << command.throttle_ratio() << ',' << command.brake_ratio()
+        << ',' << CalcVelocity(agent_status.vehicle_status().velocity()) <<  std::endl;  
+      if (position_reached_destination_ && velocity < 0.1) {
+        logger_.close();
+        closed = true;  
+      }
+    }
+    
     
     static double last_record = 0;
     if (timestamp - last_record > 0.25) {
