@@ -2,6 +2,8 @@
 
 #pragma once
 
+#define MALLOC_CHECK_ 2
+
 #include <gflags/gflags.h>
 #include <glog/logging.h>
 #include <opencv2/core/core.hpp>
@@ -10,6 +12,7 @@
 #include "common/proto/perception.pb.h"
 #include "common/utils/common/defines.h"
 #include "common/utils/common/optional.h"
+#include "common/utils/math/math_utils.h"
 #include "homework2/pointcloud.h"
 
 class Perception {

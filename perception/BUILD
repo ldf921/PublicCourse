@@ -8,9 +8,11 @@ cc_library(
         "//common/proto:cc_perception_proto",
         "//common/utils/common:defines",
         "//common/utils/common:optional",
+        "//common/utils/math",
         "//homework2:pointcloud",
         "@opencv//:core",
         "@opencv//:highgui",
+        "@opencv//:imgproc"
     ],
 )
 
