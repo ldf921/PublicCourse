@@ -35,12 +35,3 @@ PointCloud ReadPointCloudFromTextFile(const std::string& file_name) {
   return pointcloud;
 }
 
-std::vector<Eigen::Vector3d> PointCloud::asWorldCoordinates() const
-{
-  std::vector<Eigen::Vector3d> convert_points;
-  convert_points.reserve(points.size());
-  for (auto &p : points) {
-    convert_points.push_back(rotation * p + translation);
-  }
-  return convert_points;
-}
