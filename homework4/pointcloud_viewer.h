@@ -56,11 +56,14 @@ class PointCloudViewer : public utils::display::PainterWidgetBase {
   std::unordered_map<std::string, std::string> data_label_map_;
   int file_index_ = -1;
   std::vector<math::Vec3d> points_;
+  std::vector<math::Vec3d> ground_points_;
   std::vector<PointCloudLabel> labels_;
+
 
   std::unique_ptr<utils::display::OpenglPainter> gl_painter_;
   utils::display::OpenglPainter::SurfaceStyle default_prism_style_;
   utils::display::OpenglPainter::PointStyle default_point_style_;
+  utils::display::OpenglPainter::PointStyle ground_point_style_;
 
   bool obstacle_;
 
