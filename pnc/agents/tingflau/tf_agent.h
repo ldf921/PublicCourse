@@ -106,6 +106,14 @@ bool find_landmark_in_route(Eigen::Vector2d &ret, const Eigen::Vector2d &x, cons
   return false; 
 }
 
+std::pair<double, double> intersection_line(const Eigen::Vector2d &a, const Eigen::Vector2d &b, 
+  const Eigen::Vector2d &p, const Eigen::Vector2d &dir) {
+  Eigen::Vector2d dir2 = b - a;
+  double t1 = cross(dir, p - a) / cross(dir, dir2);
+  double t2 = cross(dir2, a - p) / cross(dir2, dir);
+  return std::make_pair(t1, t2);
+}
+
 int locate_in_route(const Eigen::Vector2d &query, const interface::route::Route &route) {
   double min_sqr_distance = std::numeric_limits<double>::max();
   int result;
@@ -211,7 +219,7 @@ class CurveAgent : public simulation::VehicleAgent {
       double sd;
       while(speed_r - speed_l > 1e-6) {
         double speed = speed_l + (speed_r - speed_l) / 2;
-        double length = 2 + math::Sqr(speed) / (2 * acc);
+        double length = 3 + math::Sqr(speed) / (2 * acc);
         sd = squared_vert(p, p + head * length, ov.position);
         if (sd > math::Sqr(ov.radis + 1.5 + speed / acc * ov.speed)) speed_l = speed;
         else speed_r = speed;
@@ -226,6 +234,29 @@ class CurveAgent : public simulation::VehicleAgent {
       desired_speed = std::min(desired_speed, speed_l);
     }
 
+    for(const auto &status : agent_status.perception_status().traffic_light())
+      for(const auto &traffic_light : status.single_traffic_light_status()) {
+        auto & info = route_lib_.traffic_lights[traffic_light.id().id()];
+        // CHECK(info.stop_line().point_size() == 2) << "Error" << info.stop_line().point_size() << " " << info.id().id();
+        if (traffic_light.color() == interface::map::Bulb::YELLOW || 
+          traffic_light.color() == interface::map::Bulb::RED) {
+          auto s = convert2d(info.stop_line().point(0));
+          auto t = convert2d(info.stop_line().point(1));
+          double acc = 4;
+          double dist = squared_vert(s, t, p);
+          if (dist < math::Sqr(10)) {
+            PublishVariable("TrafficLight", traffic_light.id().id(), utils::display::Color::Red()); 
+            double stop_line_intersect, front_dist;
+            std::tie(stop_line_intersect, front_dist) = intersection_line(s, t, p, head);
+            PublishVariable("FrontDist", asStr(front_dist)); 
+            if (front_dist > 0 && 0 <= stop_line_intersect && stop_line_intersect <= 1) {
+              double speed_l = std::max(0.0, std::sqrt(2 * acc * (front_dist - 3)));
+              desired_speed = std::min(desired_speed, speed_l);  
+            }
+          }
+        }
+      }
+      
     std::ostringstream os;
     os << desired_speed;
     PublishVariable("desired_speed", os.str());
@@ -245,16 +276,20 @@ class CurveAgent : public simulation::VehicleAgent {
     if (!position_reached_destination_) {
       // PID control
       double acc = controler_.get_control(timestamp, velocity);
+      PublishVariable("acc", asStr(acc), utils::display::Color::Red()); 
       std::tie(action, ratio) = control_.lookup(velocity, acc);
     } else {
       action = VehicleControl::BRAKE;
       ratio = 0.5;
     }
 
+
     if (action == VehicleControl::THROTTLE) {
       command.set_throttle_ratio(ratio);      
+      PublishVariable("action", asStr(ratio), utils::display::Color::Green()); 
     } else {
       command.set_brake_ratio(ratio);
+      PublishVariable("action", asStr(ratio), utils::display::Color::Red()); 
     }
 
     //direct pursuit for wheel
@@ -307,11 +342,11 @@ class CurveAgent : public simulation::VehicleAgent {
     static double last_record = 0;
     if (timestamp - last_record > 0.25) {
       last_record = timestamp;
-      LOG(INFO) << timestamp << ' ' << command.throttle_ratio() << ' ' << command.brake_ratio() 
-      << ' ' << command.steering_rate() << " Tw=" << target_angular << " w=" << angular
-      << " v=" << CalcVelocity(agent_status.vehicle_status().velocity()) << std::endl;  
+      // LOG(INFO) << timestamp << ' ' << command.throttle_ratio() << ' ' << command.brake_ratio() 
+      // << ' ' << command.steering_rate() << " Tw=" << target_angular << " w=" << angular
+      // << " v=" << CalcVelocity(agent_status.vehicle_status().velocity()) << std::endl;  
 
-      LOG(INFO) << p.x() << " " << p.y() << " " << head.x() << " " << head.y() << " " << desired_speed;
+      // LOG(INFO) << p.x() << " " << p.y() << " " << head.x() << " " << head.y() << " " << desired_speed;
     }
 
     return command;

@@ -42,6 +42,8 @@ class RouteLib {
   // Given a Route protobuf with a start_point and end_point,
   // find a route connect them
   bool route(interface::route::Route &);
+  
+  std::map<std::string, interface::map::TrafficLight> traffic_lights;
  private:
 
   //Fill in the predecessors and successors in the protobuf

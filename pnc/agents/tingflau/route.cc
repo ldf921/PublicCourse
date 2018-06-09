@@ -30,6 +30,10 @@ inline bool is_connected(const interface::map::Lane &from, const interface::map:
 }
 
 void RouteLib::process() {
+  for(const auto &traffic_light : map_data_.traffic_light()) {
+    traffic_lights[traffic_light.id().id()]  = traffic_light; 
+  }
+
   auto lanes = map_data_.mutable_lane();
 
   //enumerate every pair of lanes to see if one lane is the successor of another lane.
