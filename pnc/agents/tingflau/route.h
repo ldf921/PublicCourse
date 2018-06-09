@@ -10,19 +10,16 @@
 #include "glog/logging.h"
 #include <map>
 
-namespace std {
 
-template <>
-struct less<interface::map::Id>
+namespace tingflau {
+
+
+struct compare_id
 {
  bool operator()(const interface::map::Id &lhs, const interface::map::Id &rhs) const {
   return lhs.id() < rhs.id();
  }
 };
-
-}
-
-namespace tingflau {
 
 class Lane {
 public:
@@ -56,7 +53,7 @@ class RouteLib {
   std::pair<interface::map::Id, int> locate(const interface::geometry::Point2D &point);
 
   interface::map::Map map_data_;
-  std::map<interface::map::Id, Lane *> lanes_;
+  std::map<interface::map::Id, Lane *, compare_id> lanes_;
 };
 
 } //tingflau
