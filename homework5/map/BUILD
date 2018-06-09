@@ -9,12 +9,9 @@ cc_library(
     ],
     deps = [
         "//common/proto:cc_map_proto",
-<<<<<<< HEAD
         "//common/proto:cc_route_proto",
-=======
         "//common/utils/file",
         "@gflags",
->>>>>>> master
         "@glog",
         "@eigen"
     ],
