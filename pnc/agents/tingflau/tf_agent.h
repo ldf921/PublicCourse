@@ -170,37 +170,49 @@ class CurveAgent : public simulation::VehicleAgent {
     controler_.set_target(5);
 
     route_lib_.readMap(map_lib());
-    set_route(agent_status);
+    target_set_ = set_route(agent_status);
 
     logger_ = std::ofstream(FLAGS_tlau_log.c_str());
     logger_ << "time,throttle,brake,velocity" << std::endl;
     LOG(INFO) << "Initialized" << std::endl;
   }
 
-  void set_route(const interface::agent::AgentStatus& agent_status) {
+  bool target_route_;
+
+  bool set_route(const interface::agent::AgentStatus& agent_status) {
     route_.mutable_start_point()->set_x(agent_status.vehicle_status().position().x()); 
     route_.mutable_start_point()->set_y(agent_status.vehicle_status().position().y()); 
     route_.mutable_end_point()->set_x(agent_status.route_status().destination().x());
     route_.mutable_end_point()->set_y(agent_status.route_status().destination().y());
     if (!route_lib_.route(route_)) {
-        route_.mutable_end_point()->set_x(agent_status.vehicle_status().position().x());
-        route_.mutable_end_point()->set_y(agent_status.vehicle_status().position().y());    
+      return false;
     }
+    return true;
   }
 
   virtual interface::control::ControlCommand RunOneIteration(
       const interface::agent::AgentStatus& agent_status) {
 
     if (agent_status.route_status().is_new_request()) {
-        set_route(agent_status);
+        CHECK(set_route(agent_status)) << "Fail to locate new target"; 
         LOG(INFO) << "A new route #" << route_.route_point_size() << std::endl;
         LOG(INFO) << route_.start_point().x() << "," << route_.start_point().y()
             << " " << route_.end_point().x() << "," << route_.end_point().y() << std::endl;
         position_reached_destination_ = false;
+        target_set_ = true;
     }
 
     interface::control::ControlCommand command;
     // Vehicle's current position reaches the destination
+
+    if (!target_set_) {
+      command.set_steering_angle(0);
+      command.set_steering_rate(0);
+      command.set_throttle_ratio(0);
+      command.set_brake_ratio(0.5);      
+      return command;
+    }
+
     if (CalcDistance(agent_status.vehicle_status().position(),
                      agent_status.route_status().destination()) < 3.0) {
       position_reached_destination_ = true;
