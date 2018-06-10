@@ -3,6 +3,9 @@ package(default_visibility = ["//visibility:public"])
 cc_library(
     name = "tf_agent",
     hdrs = ["tf_agent.h"],
+    data = [
+        "//pnc/agents/tingflau/data:data",
+    ],
     deps = [
         "//pnc/agents/tingflau:control",
         "//pnc/agents/tingflau:route",

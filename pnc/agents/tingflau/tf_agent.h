@@ -146,6 +146,9 @@ struct ObstacleView {
     }
     position = sum / obstacle.polygon_point_size();
     radis = 0.5;
+    for(const auto &point : obstacle.polygon_point()) {
+      radis = std::max(radis, (convert2d(point) - position).norm());
+    }
     speed = 6;
     id = obstacle.id();
   }
@@ -159,7 +162,7 @@ class CurveAgent : public simulation::VehicleAgent {
 
   virtual void Initialize(const interface::agent::AgentStatus& agent_status) {
     LOG(INFO) << "Start" << std::endl;
-    control_.fromTextFile("/home/miu/PublicCourse/homework6/table/processed.txt");
+    control_.fromTextFile("pnc/agents/tingflau/data/processed.txt");
     target_speed_ = 5;
     controler_ = PID(5, 2 * FLAGS_tlau_ki);
     steer_ = PID(FLAGS_tlau_steer_kp, 0);
@@ -250,7 +253,7 @@ class CurveAgent : public simulation::VehicleAgent {
             std::tie(stop_line_intersect, front_dist) = intersection_line(s, t, p, head);
             PublishVariable("FrontDist", asStr(front_dist)); 
             if (front_dist > 0 && 0 <= stop_line_intersect && stop_line_intersect <= 1) {
-              double speed_l = std::max(0.0, std::sqrt(2 * acc * (front_dist - 3)));
+              double speed_l = std::max(0.0, std::sqrt(2 * acc * (front_dist - 4)));
               desired_speed = std::min(desired_speed, speed_l);  
             }
           }

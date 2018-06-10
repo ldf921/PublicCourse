@@ -2,8 +2,6 @@
 
 #pragma once
 
-#define MALLOC_CHECK_ 2
-
 #include <gflags/gflags.h>
 #include <glog/logging.h>
 #include <opencv2/core/core.hpp>
