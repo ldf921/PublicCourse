@@ -177,7 +177,7 @@ class CurveAgent : public simulation::VehicleAgent {
     LOG(INFO) << "Initialized" << std::endl;
   }
 
-  bool target_route_;
+  bool target_set_;
 
   bool set_route(const interface::agent::AgentStatus& agent_status) {
     route_.mutable_start_point()->set_x(agent_status.vehicle_status().position().x()); 
